@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decentralized-ai-marketplace
+  namespace: quantum-trade
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: decentralized-ai-marketplace
+  template:
+    metadata:
+      labels:
+        app: decentralized-ai-marketplace
+    spec:
+      containers:
+      - name: decentralized-ai-marketplace
+        image: saradocker209/decentralized-ai-marketplace:latest
+        ports:
+        - containerPort: 8000
+        resources:
+            requests:
+              memory: "512Mi"  # Request 512MB memory
+              cpu: "500m"      # Request 0.5 CPU cores
+            limits:
+              memory: "1024Mi"  # Limit memory to 1GB
+              cpu: "1"          # Limit CPU to 1 core
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: decentralized-ai-marketplace-service
+  namespace: quantum-trade
+spec:
+  type: LoadBalancer
+  selector:
+    app: decentralized-ai-marketplace
+  ports:
+  - port: 8000
+    targetPort: 8000
