@@ -70,12 +70,17 @@ jobs:
       run: |
         kubectl config use-context minikube
 
-    # Step 6: Apply Kubernetes manifests (deployment, service, etc.)
+    # Step 6: Create Namespace for kubernetes
+    - name: Create Kubernetes Namespace
+      run: |
+        kubectl create namespace quantum-trade || echo "Namespace already exists"
+
+    # Step 7: Apply Kubernetes manifests (deployment, service, etc.)
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f k8s/quantum-trade-deployment.yml  # Path to your Kubernetes manifest
 
-    # Step 7: Verify deployment
+    # Step 8: Verify deployment
     - name: Verify deployment
       run: |
         kubectl get pods
