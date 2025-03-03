@@ -64,6 +64,6 @@ jobs:
       # Step 4: Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/quantum-trade-deployment.yml  # Make sure your deployment file is in the `k8s` directory
+          kubectl apply -f k8s/quantum-trade-deployment.yml --validate=false # Make sure your deployment file is in the `k8s` directory
           kubectl set image deployment/decentralized-ai-marketplace decentralized-ai-marketplace=${{ secrets.DOCKER_USERNAME }}/decentralized-ai-marketplace:latest -n quantum-trade  # Update the deployment image
 
