@@ -5,7 +5,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}QuantumTrade Marketplace{% endblock %}</title>
+    <!-- Google Identity Services for One Tap Login -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        function handleCredentialResponse(response) {
+            fetch("{% url 'google-auth' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: JSON.stringify({ token: response.credential })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.href = "/user/profile/";  // Redirect to profile after login
+                } else {
+                    alert("Google authentication failed: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
 
+        function initGoogleSignIn() {
+            // Ensure Google API is loaded before execution
+            if (typeof google !== "undefined" && google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: "{{ GOOGLE_CLIENT_ID }}",
+                    callback: handleCredentialResponse,
+                    auto_select: false
+                });
+
+                google.accounts.id.renderButton(
+                    document.getElementById("google-login-btn"),
+                    { theme: "outline", size: "large" }
+                );
+
+                google.accounts.id.renderButton(
+                    document.getElementById("google-signup-btn"),
+                    { theme: "outline", size: "large" }
+                );
+            } else {
+                console.error("Google API not loaded. Retrying in 500ms...");
+                setTimeout(initGoogleSignIn, 500);  // Retry if API is not yet available
+            }
+        }
+
+        // Run function only after Google API script has fully loaded.
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(initGoogleSignIn, 500);
+        });
+    </script>
     <!-- CSS from Theme (Using CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

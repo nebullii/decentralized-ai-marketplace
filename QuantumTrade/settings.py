@@ -1,5 +1,9 @@
 import os
 from pathlib import Path
+from django.conf import settings
+from dotenv import load_dotenv
+
+load_dotenv()  # Load .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,6 +20,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+def global_settings(request):
+    """ Make settings variables available in templates """
+    return {
+        "GOOGLE_CLIENT_ID": settings.SOCIALACCOUNT_PROVIDERS["google"]["APP"]["client_id"]
+    }
 
 # Application definition
 
@@ -26,15 +35,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'ai',
     'blockchain',
     'users',
     'marketplace',
     'django.contrib.sites',  # Required by allauth
+
+    # Third-party authentication
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.google',  # Google OAuth Provider
 ]
 
 MIDDLEWARE = [
@@ -61,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'QuantumTrade.settings.global_settings'
             ],
         },
     },
@@ -125,21 +138,33 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = (
-    'allauth.account.auth_backends.AuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',  # Default Django backend
+    'allauth.account.auth_backends.AuthenticationBackend', # Social auth
 )
 
+# Google OAuth Credentials
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_CLIENT_SECRET,
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
 # Specify the Site ID (usually, you can set it to 1 for development)
 SITE_ID = 1
 
 # Redirect URLs
-LOGIN_REDIRECT_URL = '/'  # Redirect to homepage after login
-LOGOUT_REDIRECT_URL = '/'  # Redirect after logout
+LOGIN_REDIRECT_URL = 'profile'
+LOGOUT_REDIRECT_URL = 'home'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'home'
 
 # To allow email verification (optional but recommended)
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-
-
-GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+ACCOUNT_LOGIN_METHODS = {'email'}

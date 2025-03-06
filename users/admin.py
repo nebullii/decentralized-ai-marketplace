@@ -1,3 +1,4 @@
 from django.contrib import admin
+# from allauth.socialaccount.models import SocialAccount
 
-# Register your models here.
+# admin.site.register(SocialAccount)  # Allows managing social accounts
