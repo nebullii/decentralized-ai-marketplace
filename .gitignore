@@ -170,3 +170,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 kubeconfig.yaml
+
+#extras
+.DS_Store
+node_modules
