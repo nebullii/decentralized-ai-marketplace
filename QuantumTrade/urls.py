@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
-from users.views import home_view
+from .views import home_view
 
 urlpatterns = [
+    path('', home_view, name='home'),
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),  # Include allauth URLs
-    path('', home_view, name='home'), # Home Page
+    path('users/', include('users.urls')), 
+    path('marketplace/', include('marketplace.urls')),
 ]
