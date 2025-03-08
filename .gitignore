@@ -174,3 +174,4 @@ kubeconfig.yaml
 #extras
 .DS_Store
 node_modules
+package-lock.json
