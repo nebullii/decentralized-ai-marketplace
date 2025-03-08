@@ -1,4 +1,8 @@
 import os
+import subprocess
+import threading
+import signal
+import atexit
 from pathlib import Path
 from django.conf import settings
 from dotenv import load_dotenv
@@ -7,7 +11,40 @@ load_dotenv()  # Load .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+WEBPACK_PROCESS = None  # Store Webpack process globally
 
+def run_webpack():
+    """ Starts Webpack in a separate process """
+    global WEBPACK_PROCESS
+    if not WEBPACK_PROCESS:
+        try:
+            print("🚀 Starting Webpack...")
+            WEBPACK_PROCESS = subprocess.Popen(
+                ["npm", "run", "build"],  # Run Webpack in watch mode
+                cwd=BASE_DIR,
+                stdout=subprocess.DEVNULL,  # Hide Webpack logs
+                stderr=subprocess.DEVNULL,
+                preexec_fn=os.setpgrp  # Allow independent termination
+            )
+        except FileNotFoundError:
+            print("⚠️ Webpack not found! Run `npm install` to fix.")
+
+def stop_webpack():
+    """ Stops Webpack when Django stops """
+    global WEBPACK_PROCESS
+    if WEBPACK_PROCESS:
+        try:
+            print("🛑 Stopping Webpack...")
+            os.killpg(os.getpgid(WEBPACK_PROCESS.pid), signal.SIGTERM)
+        except ProcessLookupError:
+            print("⚠️ Webpack process already stopped.")
+        finally:
+            WEBPACK_PROCESS = None  # Ensure process is cleared
+
+if os.environ.get("RUN_MAIN") == "true":  # Prevent duplicate execution in Django autoreloader
+    threading.Thread(target=run_webpack, daemon=True).start()
+
+atexit.register(stop_webpack)  # Ensure Webpack stops when Django stops
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -129,7 +166,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'QuantumTrade/static'),
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 # Default primary key field type
