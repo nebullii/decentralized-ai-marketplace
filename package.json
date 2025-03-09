@@ -5,9 +5,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode=production",
-    "watch": "webpack --watch",
-    "dev": "webpack serve"
+    "build": "webpack --config webpack.config.mjs",
+    "watch": "webpack --config webpack.config.mjs --watch",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -19,13 +19,25 @@
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.2",
+    "dotenv-webpack": "^8.1.0",
     "mini-css-extract-plugin": "^2.9.2",
+    "process": "^0.11.10",
     "sass": "^1.85.1",
     "sass-loader": "^16.0.5",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.14",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0"
+    "webpack-dev-server": "^5.2.0",
+    "webpack-manifest-plugin": "^5.0.0"
+  },
+  "dependencies": {
+    "@reown/appkit": "^1.6.9",
+    "@reown/appkit-adapter-ethers": "^1.6.9",
+    "@reown/appkit-adapter-wagmi": "^1.6.9",
+    "@tanstack/react-query": "^5.67.2",
+    "ethers": "^6.13.5",
+    "viem": "^2.23.8",
+    "wagmi": "^2.14.12"
   }
 }
