@@ -97,3 +97,25 @@ def logout_view(request):
     logout(request)
     messages.success(request, "You have successfully logged out.")
     return redirect('home')
+
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+
+@csrf_exempt
+def wallet_login(request):
+    """Handles login via wallet address."""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        wallet_address = data.get("wallet_address")
+
+        if not wallet_address:
+            return JsonResponse({"error": "Wallet address missing"}, status=400)
+
+        user, created = User.objects.get_or_create(username=wallet_address)
+        login(request, user)
+
+        return JsonResponse({"success": True})
+    return JsonResponse({"error": "Invalid request"}, status=400)

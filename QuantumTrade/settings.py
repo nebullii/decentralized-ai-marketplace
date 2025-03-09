@@ -22,8 +22,6 @@ def run_webpack():
             WEBPACK_PROCESS = subprocess.Popen(
                 ["npm", "run", "build"],  # Run Webpack in watch mode
                 cwd=BASE_DIR,
-                stdout=subprocess.DEVNULL,  # Hide Webpack logs
-                stderr=subprocess.DEVNULL,
                 preexec_fn=os.setpgrp  # Allow independent termination
             )
         except FileNotFoundError:
@@ -72,6 +70,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'QuantumTrade',
 
     'ai',
     'blockchain',
@@ -110,14 +109,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'QuantumTrade.settings.global_settings'
+                'QuantumTrade.settings.global_settings',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'QuantumTrade.wsgi.application'
-
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

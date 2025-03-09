@@ -1,0 +1,7 @@
+#connectWalletButton {
+  opacity: 0; /* Start hidden */
+  transition: opacity 0.3s ease-in-out; /* Smooth fade-in */
+  &.show{
+    opacity: 1; /* Fully visible when JS is ready */
+  }
+}
