@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -72,7 +72,10 @@
     <script type="module" src="{% static 'dist/vendors.min.js' %}"></script>
 </head>
 <body>
-
+    <video class="bg-dark background-video" autoplay muted loop id="bgVideo" preload="auto">
+        <source src="{% static 'videos/crypto-background.mp4' %}" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
     {% include 'includes/navbar.html' %}  <!-- Include Navbar -->
 
     <div class="container">
