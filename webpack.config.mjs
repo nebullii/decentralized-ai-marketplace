@@ -5,6 +5,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import TerserPlugin from "terser-webpack-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import CopyWebpackPlugin from "copy-webpack-plugin";
 import webpack from "webpack";
 import Dotenv from "dotenv-webpack";
 
@@ -63,10 +64,16 @@ export default {
                 },
             },
             {
-                test: /\.scss$/,
+                test: /\.(sa|sc|c)ss$/, // Support .scss, .sass, and .css
                 use: [
                     MiniCssExtractPlugin.loader,
-                    "css-loader",
+                    {
+                        loader: "css-loader",
+                        options: {
+                            importLoaders: 1,
+                            url: false,
+                        },
+                    },
                     "sass-loader",
                 ],
             },
@@ -78,7 +85,15 @@ export default {
         new Dotenv(),
         new webpack.ProvidePlugin({
             process: "process/browser"
-        })
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+              {
+                from: 'node_modules/bootstrap-icons/font/fonts',
+                to: 'fonts',
+              },
+            ],
+        }),
     ],
     optimization: {
         minimize: true,
