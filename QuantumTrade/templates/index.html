@@ -3,6 +3,125 @@
 {% block title %}Home - QuantumTrade{% endblock %}
 
 {% block content %}
-    <h2>Welcome to QuantumTrade</h2>
-    <p>Buy, sell, and trade digital assets securely using blockchain.</p>
+   <div class="dbm-container-wrapper">
+     <!-- Category Button Bar -->
+     <div class="container my-3">
+        <div class="row">
+            <div class="col">
+                <div class="btn-group" role="group" aria-label="Category Buttons">
+                    <button type="button" class="btn btn-transparent">All Assets</button>
+                    <button type="button" class="btn btn-transparent">Coins</button>
+                    <button type="button" class="btn btn-transparent">Tokens</button>
+                    <button type="button" class="btn btn-transparent">DeFi</button>
+                    <button type="button" class="btn btn-transparent">NFTs</button>
+                    <button type="button" class="btn btn-transparent">Gaming</button>
+                    <button type="button" class="btn btn-transparent">Collectibles</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Trending NFT Collections -->
+     <div class="container mt-5">
+        <h2 class="text-center mb-4">Trending NFT Collections</h2>
+        <div class="scroll-wrapper">
+            <button class="scroll-btn left" onclick="scrollLeft()">&#10094;</button>
+            <div class="scroll-container" id="nft-scroll-container">
+                {% for collection in trending_collections %}
+                    <div class="nft-collection-tile" onclick="loadCollectionDetails('{{ collection.slug }}')">
+                        <a href="?collection={{ collection.collection }}&collection_name={{ collection.name }}">
+                        <img src="{{ collection.image }}" alt="{{ collection.name }}" class="nft-image">
+                        <div class="caption">
+                            <h5>{{ collection.name }}</h5>
+                        </div>
+                    </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <button class="scroll-btn right" onclick="scrollRight()">&#10095;</button>
+        </div>
+    </div>
+    <div class="selected-collection">
+        {% if selected_collection %}
+            <div>
+                <h3>{{ selected_collection.name }} by Owner: {{ selected_collection.owner }}</h3>
+                <img src="{{ selected_collection.image }}" alt="{{ selected_collection.name }}">
+                <p>{{ selected_collection.description }}</p>
+            </div>
+        {% endif %}
+    </div>
+    <script>
+        function scrollLeft() {
+            document.getElementById('nft-scroll-container').scrollBy({ left: -300, behavior: 'smooth' });
+        }
+    
+        function scrollRight() {
+            document.getElementById('nft-scroll-container').scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    </script>
+    <h2>Trending Crypto Assets</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Asset</th>
+                <th>Symbol</th>
+                <th>Floor Price (BTC)</th>
+                <th>Volume</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in trending_assets %}
+                <tr>
+                    <td>
+                        <img src="{{ asset.icon }}" alt="{{ asset.name }}" width="24" height="24">
+                        {{ asset.name }}
+                    </td>
+                    <td>{{ asset.symbol }}</td>
+                    <td>{{ asset.floor_price|floatformat:8 }}</td>
+                    <td>{{ asset.volume }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No trending assets available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+     <!-- Explore Categories Section -->
+     <h2>Explore Categories</h2>
+    <div class="container mt-3">
+        <div class="row justify-content-center dbm-categories-home">
+            <div class="col-auto">
+                <button type="button" class="btn btn-category" style="background-image: url('/static/images/categories-buttons/art-tile.jpg');">
+                    <span>Art</span>
+                </button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-category" style="background-image: url('/static/images/categories-buttons/gaming-tile.jpg');">
+                    <span>Gaming</span>
+                </button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-category" style="background-image: url('/static/images/categories-buttons/Membership-tile.jpg');">
+                    <span>Memberships</span>
+                </button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-category" style="background-image: url('/static/images/categories-buttons/Music-tile.jpg');">
+                    <span>Music</span>
+                </button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-category" style="background-image: url('/static/images/categories-buttons/photography-tile.jpg');">
+                    <span>Photography</span>
+                </button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-category" style="background-image: url('/static/images/categories-buttons/collectibles-tile.jpg');">
+                    <span>Collectibles</span>
+                </button>
+            </div>
+        </div>
+    </div>
+   </div>
 {% endblock %}
