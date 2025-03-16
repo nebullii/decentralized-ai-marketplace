@@ -1,0 +1,26 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.9'
+  - script: |
+      python -m venv venv
+      source venv/bin/activate
+      pip install -r requirements.txt
+    displayName: 'Install Dependencies'
+  - script: |
+      python manage.py migrate
+      python manage.py test
+    displayName: 'Run Tests'
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: '<Azure Subscription>'
+      appName: 'decentralized-ai-marketplace'
+      package: '.'
