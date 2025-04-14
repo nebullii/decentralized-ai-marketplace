@@ -4,7 +4,7 @@ trigger:
       - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'  # Try windows instead of ubuntu
 
 jobs:
   - job: TestAndDeploy
@@ -16,14 +16,14 @@ jobs:
           
       - script: |
           python -m venv venv
-          source venv/bin/activate
+          venv\Scripts\activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-azurepipelines pytest-cov
         displayName: 'Install Dependencies'
 
       - script: |
-          source venv/bin/activate
+          venv\Scripts\activate
           python manage.py migrate
           python manage.py test
         displayName: 'Run Tests'
