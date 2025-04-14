@@ -1,48 +1,29 @@
 trigger:
-- main  # Replace with your branch if it's not 'main'
+  branches:
+    include:
+      - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  # Define variables that may be needed, like your database or credentials
-  DJANGO_SECRET_KEY: $(DJANGO_SECRET_KEY)
-  DB_NAME: $(DB_NAME)
-  DB_USER: $(DB_USER)
-  DB_PASSWORD: $(DB_PASSWORD)
-  DB_HOST: $(DB_HOST)
-  GOOGLE_CLIENT_ID: $(GOOGLE_CLIENT_ID)
-  GOOGLE_CLIENT_SECRET: $(GOOGLE_CLIENT_SECRET)
+jobs:
+  - job: TestAndDeploy
+    displayName: 'Test and Deploy'
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.13'
+          
+      - script: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-azurepipelines pytest-cov
+        displayName: 'Install Dependencies'
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.x'  # You can specify your desired Python version
-
-- task: Checkout@1  # Checkout the code from your repository
-  inputs:
-    clean: true  # Ensures clean workspace before build
-
-- script: |
-    python -m venv venv
-    source venv/bin/activate
-    pip install --upgrade pip
-    pip install -r requirements.txt  # Install project dependencies
-  displayName: 'Install dependencies'
-
-- script: |
-    source venv/bin/activate
-    python manage.py migrate  # Apply migrations to your database
-    python manage.py collectstatic --noinput  # Collect static files
-  displayName: 'Migrate and collect static files'
-
-- script: |
-    source venv/bin/activate
-    python manage.py test  # Run your tests
-  displayName: 'Run tests'
-
-- task: PublishBuildArtifacts@1  # Publish the build artifacts
-  inputs:
-    pathToPublish: $(Build.ArtifactStagingDirectory)
-    artifactName: drop
-    publishLocation: 'Container'
+      - script: |
+          source venv/bin/activate
+          python manage.py migrate
+          python manage.py test
+        displayName: 'Run Tests'
